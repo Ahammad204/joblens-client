@@ -17,6 +17,8 @@ import Chatbot from "../componet/chatbot/Chatbot";
 import ManageJobs from "../Pages/Dashboard/ManageJobs/ManageJobs";
 import ManageResources from "../Pages/Dashboard/ManageResources/ManageResources";
 import AdminDashboard from "../Pages/Dashboard/Admin/AdminDashboard";
+import ForgotPassword from "../componet/Shared/ForgotPassword/ForgotPassword";
+import ResetPassword from "../componet/Shared/ResetPassword/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +65,14 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register></Register>,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword></ForgotPassword>,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword></ResetPassword>,
   },
   {
     path: "/dashboard",

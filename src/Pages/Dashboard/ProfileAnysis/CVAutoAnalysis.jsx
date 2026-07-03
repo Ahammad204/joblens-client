@@ -4,8 +4,10 @@ import useAuth from "../../../Hooks/useAuth";
 import Loading from "../../../componet/Shared/Loading/Loading";
 import axiosPublic from "../../../utils/axiosPublic";
 import { analyzeCV } from "../../../utils/skillExtractor";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import CVDocument from "../../../componet/CVDocument/CVDocument";
+import { downloadCVasDocx } from "./generateCVDocx";
+// import { PDFDownloadLink } from "@react-pdf/renderer";
+// import CVDocument from "../../../componet/CVDocument/CVDocument";
+
 
 // --- Utility Components for Editing ---
 
@@ -13,7 +15,6 @@ import CVDocument from "../../../componet/CVDocument/CVDocument";
 const EditableInput = ({ label, initialValue, onSave }) => {
   const [value, setValue] = useState(initialValue || "");
   const [isEditing, setIsEditing] = useState(false);
-
 
   const handleSave = () => {
     if (value.trim() !== (initialValue || "")) {
@@ -53,7 +54,6 @@ const EditableInput = ({ label, initialValue, onSave }) => {
           </>
         )}
       </div>
-      
     </div>
   );
 };
@@ -92,10 +92,16 @@ const EditableTagSection = ({ title, items, onUpdate }) => {
 
   return (
     <div className="mb-6 bg-white p-4 rounded-xl border border-gray-100">
-      <h3 className="text-xl font-bold text-gray-800 mb-3 border-b pb-2">{title}</h3>
+      <h3 className="text-xl font-bold text-gray-800 mb-3 border-b pb-2">
+        {title}
+      </h3>
       <div className="flex flex-wrap gap-3 mb-4">
         {items.map((item, i) => (
-          <EditableTag key={i} text={item} onRemove={() => handleRemoveItem(item)} />
+          <EditableTag
+            key={i}
+            text={item}
+            onRemove={() => handleRemoveItem(item)}
+          />
         ))}
       </div>
       <div className="flex gap-2">
@@ -118,7 +124,6 @@ const EditableTagSection = ({ title, items, onUpdate }) => {
   );
 };
 
-
 // --- Main Component ---
 
 const CVAutoAnalysis = () => {
@@ -126,20 +131,25 @@ const CVAutoAnalysis = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reanalyzing, setReanalyzing] = useState(false);
-const [generatedCV, setGeneratedCV] = useState(null);
-const [loadingCV, setLoadingCV] = useState(false);
+  const [generatedCV, setGeneratedCV] = useState(null);
+  const [loadingCV, setLoadingCV] = useState(false);
 
-const generateCV = async () => {
-  try {
-    setLoadingCV(true);
-    const res = await axiosPublic.post("/api/cv/generate", {}, { withCredentials: true });
-    setGeneratedCV(res.data);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setLoadingCV(false);
-  }
-};
+  const generateCV = async () => {
+    try {
+      setLoadingCV(true);
+      const res = await axiosPublic.post(
+        "/api/cv/generate",
+        {},
+        { withCredentials: true },
+      );
+      setGeneratedCV(res.data);
+      console.log(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingCV(false);
+    }
+  };
   const fetchProfile = useCallback(async () => {
     if (!user) return;
     try {
@@ -157,29 +167,33 @@ const generateCV = async () => {
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
-  
+
   // Handlers to update the state and save to server
   const handleProfileUpdate = async (field, value) => {
     if (!profileData || !user?._id) return;
-    
+
     // Optimistic UI update
     const updatedData = { ...profileData, [field]: value };
     setProfileData(updatedData);
 
     try {
-      const res = await axiosPublic.patch(`/users/${user._id}`, { [field]: value }, { withCredentials: true });
+      const res = await axiosPublic.patch(
+        `/users/${user._id}`,
+        { [field]: value },
+        { withCredentials: true },
+      );
       // Update the global user context (if necessary, depends on useAuth implementation)
       // setUser(res.data); // Assuming server returns the updated user object
       console.log(`${field} updated successfully.`);
     } catch (err) {
       console.error(`Update ${field} Error:`, err);
       // Revert if API fails (optional, but good practice)
-      // setProfileData(profileData); 
+      // setProfileData(profileData);
     }
   };
 
   const handleArrayUpdate = async (field, newArray) => {
-      handleProfileUpdate(field, newArray);
+    handleProfileUpdate(field, newArray);
   };
 
   const runAnalysis = async () => {
@@ -198,16 +212,16 @@ const generateCV = async () => {
           roles: analysis.roles,
           explain: analysis.explain,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
-      
+
       // Update profileData state with new analysis results
-      setProfileData(prev => ({
+      setProfileData((prev) => ({
         ...prev,
         skills: analysis.skills,
         tools: analysis.tools,
         roles: analysis.roles,
-        cvAnalysis: { explain: analysis.explain, updatedAt: new Date() }
+        cvAnalysis: { explain: analysis.explain, updatedAt: new Date() },
       }));
     } catch (err) {
       console.error("CV Analysis Save Error:", err);
@@ -218,26 +232,39 @@ const generateCV = async () => {
 
   if (loading || !profileData) return <Loading />;
 
-  const { name, email, education, experience, careerTrack, skills, tools, cvAnalysis, roles } = profileData;
+  const {
+    name,
+    email,
+    education,
+    experience,
+    careerTrack,
+    skills,
+    tools,
+    cvAnalysis,
+    roles,
+  } = profileData;
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-2xl rounded-xl border border-gray-100">
       <h2 className="text-4xl font-extrabold mb-8 text-[#41b39d] border-b pb-4">
         <span role="img" aria-label="profile"></span> Your Profile
       </h2>
-      
 
       {/* Basic Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
         <div>
-          <h3 className="text-2xl font-bold mb-4 text-gray-800">Personal Details</h3>
+          <h3 className="text-2xl font-bold mb-4 text-gray-800">
+            Personal Details
+          </h3>
           <EditableInput
             label="Full Name"
             initialValue={name}
             onSave={(value) => handleProfileUpdate("name", value)}
           />
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email (Cannot Edit)</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Email (Cannot Edit)
+            </label>
             <p className="text-lg font-semibold text-gray-500 p-2">{email}</p>
           </div>
           <EditableInput
@@ -261,15 +288,25 @@ const generateCV = async () => {
           <EditableInput
             label="Roles (Derived from CV)"
             initialValue={roles?.join(", ") || "N/A"}
-            onSave={(value) => handleProfileUpdate("roles", value.split(",").map(s => s.trim()).filter(Boolean))}
+            onSave={(value) =>
+              handleProfileUpdate(
+                "roles",
+                value
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+              )
+            }
           />
         </div>
       </div>
-      
+
       <hr className="my-8 border-gray-200" />
-      
+
       {/* Skills and Tools */}
-      <h3 className="text-2xl font-bold mb-4 text-gray-800">Skills & Tools (Editable)</h3>
+      <h3 className="text-2xl font-bold mb-4 text-gray-800">
+        Skills & Tools (Editable)
+      </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
         <EditableTagSection
           title="Skills"
@@ -288,16 +325,23 @@ const generateCV = async () => {
       {/* CV Analysis Section */}
       <div className="mt-8">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">
-          <span role="img" aria-label="analysis">📄</span> CV Auto-Analysis Summary
+          <span role="img" aria-label="analysis">
+            📄
+          </span>{" "}
+          CV Auto-Analysis Summary
         </h3>
-        
+
         <p className="text-gray-600 mb-4 text-sm">
-          This data was **automatically extracted from your resume** and is used for job matching and recommendations. You can manually edit the skills/tools above, or re-run the analysis below.
+          This data was **automatically extracted from your resume** and is used
+          for job matching and recommendations. You can manually edit the
+          skills/tools above, or re-run the analysis below.
         </p>
 
         {cvAnalysis?.explain ? (
           <div className="bg-red-50 p-6 rounded-xl border border-red-200 shadow-inner">
-            <h4 className="font-semibold text-[#41b39d] mb-2">AI Explanation:</h4>
+            <h4 className="font-semibold text-[#41b39d] mb-2">
+              AI Explanation:
+            </h4>
             <p className="text-gray-700 leading-relaxed text-sm">
               {cvAnalysis.explain}
             </p>
@@ -306,77 +350,155 @@ const generateCV = async () => {
             </p>
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-4">No CV analysis data found.</p>
+          <p className="text-gray-500 text-center py-4">
+            No CV analysis data found.
+          </p>
         )}
 
         <button
           onClick={runAnalysis}
           disabled={reanalyzing || !user?.resume}
-          className={`mt-6 w-full ${reanalyzing ? 'bg-gray-400' : 'bg-[#41b39d] '} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
+          className={`mt-6 w-full cursor-pointer ${reanalyzing ? "bg-gray-400" : "bg-[#41b39d] "} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
         >
-          {reanalyzing ? "Re-analyzing CV..." : user?.resume ? "Re-analyze CV" : "Upload Resume to Analyze"}
+          {reanalyzing
+            ? "Re-analyzing CV..."
+            : user?.resume
+              ? "Re-analyze CV"
+              : "Upload Resume to Analyze"}
         </button>
       </div>
-     
 
-{/* --- AI Generated CV Section --- */}
-<div className="mt-8">
-  <button
-    onClick={generateCV}
-    disabled={loadingCV}
-    className={`w-full ${loadingCV ? 'bg-gray-400' : 'bg-[#41b39d] '} text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
-  >
-    {loadingCV ? "Generating CV..." : "Generate AI CV"}
-  </button>
-</div>
-{generatedCV && (
-  <div className="bg-white p-6 rounded-xl shadow-md mt-6">
-    <h2 className="text-3xl font-bold mb-4">{generatedCV?.personalInfo?.name}</h2>
-    <p className="text-sm mb-2">{generatedCV?.personalInfo?.email}</p>
-    <p className="mb-4">{generatedCV?.professionalSummary}</p>
-
-    <h3 className="font-semibold mt-4">Experience</h3>
-    {generatedCV?.experience?.map((exp, i) => (
-      <div key={i} className="mb-2">
-        <p className="font-semibold">{exp.role} @ {exp.company}</p>
-        <ul className="list-disc ml-5 text-sm">
-          {exp.description.map((d, j) => <li key={j}>{d}</li>)}
-        </ul>
+      {/* --- AI Generated CV Section --- */}
+      <div className="mt-8">
+        <button
+          onClick={generateCV}
+          disabled={loadingCV}
+          className={`w-full cursor-pointer ${
+            loadingCV ? "bg-gray-400" : "bg-[#41b39d]"
+          } text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
+        >
+          {loadingCV ? "Generating CV..." : "Generate AI CV"}
+        </button>
       </div>
-    ))}
 
-    <h3 className="font-semibold mt-4">Projects</h3>
-    {generatedCV?.projects?.map((proj, i) => (
-      <div key={i} className="mb-2">
-        <p className="font-semibold">{proj.title}</p>
-        <ul className="list-disc ml-5 text-sm">
-          {proj.description.map((d, j) => <li key={j}>{d}</li>)}
-        </ul>
-      </div>
-    ))}
+      {generatedCV && (
+        <div className="bg-white p-6 rounded-xl shadow-md mt-6 border border-gray-100">
+          {/* ── Preview Header ── */}
+          <div className="flex items-center justify-between mb-6 border-b pb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {generatedCV?.personalInfo?.name}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {generatedCV?.personalInfo?.email}
+              </p>
+            </div>
+            {/* ── DOCX Download Button ── */}
+            <button
+              onClick={() => downloadCVasDocx(generatedCV)}
+              className="flex items-center gap-2 bg-[#41b39d] hover:bg-[#369d89] text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-md"
+            >
+              ⬇ Download as Word (.docx)
+            </button>
+          </div>
 
-    <h3 className="font-semibold mt-4">Skills & Tools</h3>
-    <p>{generatedCV?.skills?.join(", ")} | {generatedCV?.tools?.join(", ")}</p>
+          {/* ── Professional Summary ── */}
+          {generatedCV?.professionalSummary && (
+            <div className="mb-5">
+              <h3 className="font-bold text-gray-700 text-sm uppercase tracking-wide border-b border-[#41b39d] pb-1 mb-2">
+                Profile
+              </h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {generatedCV.professionalSummary}
+              </p>
+            </div>
+          )}
 
-    <h3 className="font-semibold mt-4">Recommendations</h3>
-    <ul className="list-disc ml-5 text-sm">
-      {generatedCV?.recommendations?.map((r, i) => <li key={i}>{r}</li>)}
-    </ul>
+          {/* ── Experience ── */}
+          {generatedCV?.experience?.length > 0 && (
+            <div className="mb-5">
+              <h3 className="font-bold text-gray-700 text-sm uppercase tracking-wide border-b border-[#41b39d] pb-1 mb-3">
+                Experience
+              </h3>
+              {generatedCV.experience.map((exp, i) => (
+                <div key={i} className="mb-4">
+                  <div className="flex justify-between items-baseline">
+                    <p className="font-semibold text-gray-800">{exp.company}</p>
+                    <p className="text-xs text-gray-400">{exp.duration}</p>
+                  </div>
+                  <p className="text-sm text-[#41b39d] italic mb-1">
+                    {exp.role}
+                  </p>
+                  <ul className="list-disc ml-5 text-sm text-gray-600 space-y-1">
+                    {exp.description.map((d, j) => (
+                      <li key={j}>{d}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
 
+          {/* ── Skills & Tools ── */}
+          {(generatedCV?.skills?.length > 0 ||
+            generatedCV?.tools?.length > 0) && (
+            <div className="mb-5">
+              <h3 className="font-bold text-gray-700 text-sm uppercase tracking-wide border-b border-[#41b39d] pb-1 mb-2">
+                Skills & Tools
+              </h3>
+              {generatedCV?.skills?.length > 0 && (
+                <p className="text-sm text-gray-600 mb-1">
+                  <span className="font-medium">Skills: </span>
+                  {generatedCV.skills.join(", ")}
+                </p>
+              )}
+              {generatedCV?.tools?.length > 0 && (
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Tools: </span>
+                  {generatedCV.tools.join(", ")}
+                </p>
+              )}
+            </div>
+          )}
 
+          {/* ── Projects ── */}
+          {generatedCV?.projects?.length > 0 && (
+            <div className="mb-5">
+              <h3 className="font-bold text-gray-700 text-sm uppercase tracking-wide border-b border-[#41b39d] pb-1 mb-3">
+                Projects
+              </h3>
+              {generatedCV.projects.map((proj, i) => (
+                <div key={i} className="mb-3">
+                  <p className="font-semibold text-gray-800 mb-1">
+                    {proj.title}
+                  </p>
+                  <ul className="list-disc ml-5 text-sm text-gray-600 space-y-1">
+                    {proj.description.map((d, j) => (
+                      <li key={j}>{d}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
 
-<PDFDownloadLink
-  document={<CVDocument cv={generatedCV} />}
-  fileName={`${generatedCV.personalInfo.name}_CV.pdf`}
-  className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg"
->
-  {({ loading }) => (loading ? "Generating PDF..." : "Download PDF")}
-</PDFDownloadLink>
+          
 
-  </div>
-)}
-
-      
+          {/* ── Recommendations ── */}
+          {/* {generatedCV?.recommendations?.length > 0 && (
+            <div className="mb-2">
+              <h3 className="font-bold text-gray-700 text-sm uppercase tracking-wide border-b border-[#41b39d] pb-1 mb-2">
+                Recommendations
+              </h3>
+              <ul className="list-disc ml-5 text-sm text-gray-500 space-y-1">
+                {generatedCV.recommendations.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ul>
+            </div>
+          )} */}
+        </div>
+      )}
     </div>
   );
 };

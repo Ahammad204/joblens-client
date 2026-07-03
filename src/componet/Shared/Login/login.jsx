@@ -95,7 +95,9 @@ const Login = () => {
                 Register
               </Link>
             </p>
-     
+            <Link to="/forgot-password" className="text-sm text-[#0fb894] mt-2 inline-block">
+              Forgot Password?
+            </Link>
           </div>
         </form>
       </div>

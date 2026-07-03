@@ -1,90 +1,236 @@
-# Joblens - AI-Powered Job & Learning Platform
+# Joblens
 
-Joblens is a modern, AI-driven web application designed to bridge the gap between job seekers and opportunities. It provides personalized job and learning resource recommendations, AI-powered career roadmap generation, and automated CV analysis to help users navigate their career paths effectively.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-joblenss.netlify.app-0fb894?style=for-the-badge&logo=netlify)](https://joblenss.netlify.app/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Ahammad204%2Fjoblens--client-181717?style=for-the-badge&logo=github)](https://github.com/Ahammad204/joblens-client)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite)](https://vite.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-## ✨ Features
+> **AI-Powered Job & Learning Platform** — Personalized career matching, skill gap analysis, roadmap generation, and CV intelligence.
 
-- **User Authentication:** Secure registration and login with JWT-based authentication.
-- **Personalized Dashboard:** A central hub for users to view recommended jobs, learning resources, and track their career progress.
-- **AI-Powered Recommendations:**
-  - **Job Matching:** Recommends jobs based on a user's skills, experience, and career track, complete with a match score and reasoning.
-  - **Skill Gap Analysis:** Identifies missing skills for a desired job and suggests relevant learning resources to fill the gaps.
-- **Dynamic Job & Resource Search:** Users can search, filter, and browse extensive lists of jobs and learning materials.
-- **AI Career Roadmap:** Generates a personalized, step-by-step learning plan to help users achieve their career goals.
-- **CV Auto-Analysis:** Automatically extracts and summarizes skills, tools, and roles from a user's resume.
-- **AI-Generated CV:** Creates a professional CV layout based on the user's profile data, which can be downloaded as a PDF.
-- **Admin Dashboard:** Special interface for administrators to manage job listings.
-- **Floating AI Chatbot:** An integrated career assistant to answer user queries in real-time.
+---
+
+## 🌐 Live Demo
+
+**[https://joblenss.netlify.app/](https://joblenss.netlify.app/)**
+
+---
+
+## 📖 About
+
+**Joblens** is a modern, AI-driven web application that bridges the gap between job seekers and opportunities. It provides personalized job and learning resource recommendations, AI-powered career roadmap generation, and automated CV analysis to help users navigate their career paths effectively.
+
+Built with **React 19**, **Vite 7**, and **Tailwind CSS 4**, the platform leverages Google Generative AI and OpenRouter for intelligent career assistance.
+
+---
+
+## ✨ Key Features
+
+### 🤖 AI-Powered Intelligence
+| Feature | Description |
+|---------|-------------|
+| **Smart Job Matching** | Recommends jobs based on user skills, experience, and career track with match scores and reasoning |
+| **Skill Gap Analysis** | Identifies missing skills for desired roles and suggests targeted learning resources |
+| **AI Career Roadmap** | Generates personalized, step-by-step learning plans with phases, steps, and project ideas |
+| **CV Auto-Analysis** | Extracts skills, tools, and roles from uploaded resumes using AI |
+| **AI-Generated CV** | Creates professional CV layouts from profile data, downloadable as `.docx` |
+| **Floating AI Chatbot** | Integrated career assistant for real-time queries (accessible site-wide) |
+
+### 👤 User Features
+- **Secure Authentication** — JWT-based login/register with forgot/reset password flow
+- **Personalized Dashboard** — Central hub with recommended jobs, learning resources, and application tracking
+- **Comprehensive Profile** — Skills, experience, education, career track, salary expectations, resume upload
+- **Job Discovery** — Search, filter, and browse job listings with external platform links
+- **Learning Resources** — Curated courses/videos matched to user skills
+- **Progress Tracking** — Application history and roadmap progress
+
+### 🛡️ Admin Features
+- **Analytics Dashboard** — Users analyzed, jobs suggested, in-demand skills, common skill gaps
+- **Job Management** — Full CRUD for job listings
+- **Resource Management** — Full CRUD for learning resources
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React (with Vite), React Router
-- **Styling:** Tailwind CSS with DaisyUI
-- **State Management & Data Fetching:** TanStack Query (React Query) & Axios
-- **UI Components:** Lottie for animations, Lucide React for icons
-- **PDF Generation:** `@react-pdf/renderer` for client-side PDF creation.
+| Category | Technologies |
+|----------|--------------|
+| **Framework** | React 19, Vite 7, React Router 7 |
+| **Styling** | Tailwind CSS 4, DaisyUI 5 |
+| **State & Data** | TanStack Query (React Query) 5, Axios |
+| **AI/ML** | Google Generative AI, OpenRouter API |
+| **PDF/Document** | @react-pdf/renderer, docx, file-saver, html2pdf.js |
+| **UI/UX** | Lucide React, React Icons, Lottie React, React Hot Toast |
+| **Utilities** | LocalForage, Match Sorter, Sort By, React Markdown |
+| **Dev Tools** | ESLint 9, TypeScript types |
+
+---
+
+## 📁 Project Structure
+
+```
+joblens/
+├── public/                 # Static assets
+├── src/
+│   ├── assets/             # Lottie animations, images
+│   ├── componet/           # React components
+│   │   ├── CVDocument/     # PDF CV document template
+│   │   ├── FloatingChat/   # Floating AI chatbot widget
+│   │   ├── chatbot/        # Full-page chatbot page
+│   │   └── Shared/         # Shared UI (Login, Register, Loading, etc.)
+│   ├── Hooks/              # Custom hooks (useAuth, useAdmin)
+│   ├── Main/               # Main layout wrapper
+│   ├── Pages/              # Page components
+│   │   ├── AllJobs/        # Job listings
+│   │   ├── AllJobsDetails/ # Job detail view
+│   │   ├── AllResources/   # Learning resources
+│   │   ├── Dashboard/      # Protected dashboard routes
+│   │   │   ├── Admin/      # Admin analytics
+│   │   │   ├── DashboardDetails/  # Main dashboard view
+│   │   │   ├── ManageJobs/  # Admin job CRUD
+│   │   │   ├── ManageResources/ # Admin resource CRUD
+│   │   │   ├── ProfileAnysis/   # CV analysis & AI CV generation
+│   │   │   ├── Roadmap/     # Career roadmap view
+│   │   │   └── UserProfile/ # Profile editor
+│   │   └── Home/           # Landing page sections
+│   ├── Provider/           # Context providers (AuthProvider)
+│   ├── Router/             # React Router configuration
+│   ├── utils/              # Utilities (axios instances, skill extraction)
+│   ├── index.css           # Global styles
+│   └── main.jsx            # Entry point
+├── .env                    # Environment variables (gitignored)
+├── package.json
+├── vite.config.js
+└── README.md
+```
+
+---
 
 ## 🚀 Getting Started
 
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
-
 ### Prerequisites
-
-- Node.js (v18 or higher)
-- npm or yarn
+- **Node.js** v18+
+- **npm** or **yarn**
 
 ### Installation
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Ahammad204/Joblens.git
-    cd Joblens
-    ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/Ahammad204/joblens-client.git
+cd joblens-client
 
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+# 2. Install dependencies
+npm install
 
-3.  **Set up environment variables:**
+# 3. Configure environment variables
+# Create a .env file in the project root:
+```
 
-    Create a `.env` file in the root of the `Joblens` directory and add the following variables. This file is ignored by Git.
+**`.env`**
+```env
+# Backend API base URL
+VITE_API_BASE_URL=https://joblens-server.vercel.app
 
-    ```env
-    # The base URL for the backend server
-    VITE_API_BASE_URL=http://localhost:5000
+# ImgBB API key for image uploads (registration)
+VITE_IMGBB_KEY=your_imgbb_api_key
 
-    # API key from ImgBB for image uploads (used in registration)
-    VITE_IMGBB_KEY=<your_imgbb_api_key>
-    ```
+# OpenRouter API key for AI features
+VITE_OpenRouter_API_KEY=your_openrouter_api_key
 
-4.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-    The application will be available at `http://localhost:5173`.
+# Web3Forms access key (contact form)
+VITE_WEB3_ACCESS_KEY=your_web3forms_key
+```
+
+```bash
+# 4. Start development server
+npm run dev
+```
+
+The app will be available at **http://localhost:5173**
+
+---
 
 ## 📜 Available Scripts
 
-In the project directory, you can run:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server with HMR |
+| `npm run build` | Production build to `dist/` |
+| `npm run lint` | Run ESLint on codebase |
+| `npm run preview` | Preview production build locally |
 
-- `npm run dev`: Runs the app in development mode.
-- `npm run build`: Builds the app for production to the `dist` folder.
-- `npm run lint`: Lints the codebase using ESLint.
-- `npm run preview`: Serves the production build locally for preview.
+---
 
 ## 🚢 Deployment
 
-This is a standard Vite-based React application. To deploy, follow these steps:
+### Netlify (Recommended)
+1. Push to GitHub
+2. Connect repo to Netlify
+3. Configure build settings:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+4. Add environment variables in Netlify dashboard
+5. Deploy!
 
-1.  **Build the project:**
-    ```bash
-    npm run build
-    ```
-2.  **Deploy the `dist` folder:**
-    The contents of the generated `dist` folder can be deployed to any static hosting service, such as:
-    - [Vercel](https://vercel.com/)
-    - [Netlify](https://www.netlify.com/)
-    - [GitHub Pages](https://pages.github.com/)
+### Vercel
+```bash
+npm i -g vercel
+vercel --prod
+```
 
-    Ensure you configure the environment variables (`VITE_API_BASE_URL`, `VITE_IMGBB_KEY`) in your hosting provider's settings.
+### Docker
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+EXPOSE 4173
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. **Fork** the repository
+2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
+3. **Commit** your changes: `git commit -m 'Add amazing feature'`
+4. **Push** to the branch: `git push origin feature/amazing-feature`
+5. **Open** a Pull Request
+
+### Code Style
+- Run `npm run lint` before committing
+- Follow existing component patterns
+- Use functional components with hooks
+- Keep components focused and reusable
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Google Generative AI](https://ai.google.dev/) for AI capabilities
+- [OpenRouter](https://openrouter.ai/) for LLM access
+- [TanStack Query](https://tanstack.com/query) for server state management
+- [Tailwind CSS](https://tailwindcss.com/) for utility-first styling
+- [LottieFiles](https://lottiefiles.com/) for animations
+
+---
+
+## 📞 Contact
+
+**Ahammad204** — [GitHub](https://github.com/Ahammad204)
+
+**Project Link:** [https://github.com/Ahammad204/joblens-client](https://github.com/Ahammad204/joblens-client)
+
+**Live Demo:** [https://joblenss.netlify.app/](https://joblenss.netlify.app/)
