@@ -133,6 +133,10 @@ const CVAutoAnalysis = () => {
   const [reanalyzing, setReanalyzing] = useState(false);
   const [generatedCV, setGeneratedCV] = useState(null);
   const [loadingCV, setLoadingCV] = useState(false);
+  // Trained ML model prediction (Linear SVM), shown next to the analysis
+  const [mlPrediction, setMlPrediction] = useState(null);
+  const [mlLoading, setMlLoading] = useState(false);
+  const [mlError, setMlError] = useState("");
 
   const generateCV = async () => {
     try {
@@ -157,6 +161,10 @@ const CVAutoAnalysis = () => {
       const res = await axiosPublic.get("/api/me", { withCredentials: true });
       // Use the fetched user data to populate the editable state
       setProfileData(res.data.user);
+      // Show a previously saved ML prediction, if one exists
+      if (res.data.user?.mlPrediction) {
+        setMlPrediction(res.data.user.mlPrediction);
+      }
     } catch (err) {
       console.error("Fetch User Error:", err);
     } finally {
@@ -203,6 +211,29 @@ const CVAutoAnalysis = () => {
       setReanalyzing(true);
       const analysis = await analyzeCV(user.resume);
 
+      // Trained ML model prediction (Linear SVM) — runs next to the
+      // rule-based/LLM analysis. If the ML service is down, the rest
+      // of the analysis still saves; the error is shown, not fatal.
+      let ml = null;
+      try {
+        setMlLoading(true);
+        setMlError("");
+        const mlRes = await axiosPublic.post(
+          "/api/ml/predict",
+          { cvText: user.resume },
+          { withCredentials: true },
+        );
+        ml = mlRes.data?.data || null;
+        setMlPrediction(ml);
+      } catch (mlErr) {
+        console.error("ML Prediction Error:", mlErr);
+        setMlError(
+          mlErr?.response?.data?.message || "ML prediction unavailable.",
+        );
+      } finally {
+        setMlLoading(false);
+      }
+
       // Save analysis results to database AND update the current state
       await axiosPublic.post(
         "/api/cv/save",
@@ -211,6 +242,7 @@ const CVAutoAnalysis = () => {
           tools: analysis.tools,
           roles: analysis.roles,
           explain: analysis.explain,
+          mlPrediction: ml,
         },
         { withCredentials: true },
       );
@@ -222,6 +254,7 @@ const CVAutoAnalysis = () => {
         tools: analysis.tools,
         roles: analysis.roles,
         cvAnalysis: { explain: analysis.explain, updatedAt: new Date() },
+        ...(ml ? { mlPrediction: ml } : {}),
       }));
     } catch (err) {
       console.error("CV Analysis Save Error:", err);
@@ -354,6 +387,47 @@ const CVAutoAnalysis = () => {
             No CV analysis data found.
           </p>
         )}
+
+        {/* Trained ML Model Prediction — next to the rule-based result */}
+        <div className="mt-6">
+          <h4 className="font-semibold text-[#41b39d] mb-2">
+            🤖 ML Prediction (trained model):
+          </h4>
+          {mlLoading ? (
+            <p className="text-gray-500 text-sm">
+              Predicting with the trained model...
+            </p>
+          ) : mlPrediction ? (
+            <div className="bg-teal-50 p-6 rounded-xl border border-teal-200 shadow-inner">
+              <p className="text-gray-800 text-lg">
+                Best role:{" "}
+                <span className="font-bold">
+                  {mlPrediction.predicted_category}
+                </span>{" "}
+                <span className="text-sm text-gray-500">
+                  (score {(mlPrediction.confidence * 100).toFixed(1)}%)
+                </span>
+              </p>
+              <ul className="mt-3 space-y-1 text-sm text-gray-700">
+                {mlPrediction.top_3?.map((t, i) => (
+                  <li key={i}>
+                    {i + 1}. {t.category} — {(t.probability * 100).toFixed(1)}%
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-xs text-gray-500">
+                Trained Linear SVM on 2,484 CVs. Scores are relative, not
+                calibrated probabilities.
+              </p>
+            </div>
+          ) : mlError ? (
+            <p className="text-gray-500 text-sm">{mlError}</p>
+          ) : (
+            <p className="text-gray-500 text-sm">
+              No ML prediction yet — run the CV analysis to get one.
+            </p>
+          )}
+        </div>
 
         <button
           onClick={runAnalysis}
