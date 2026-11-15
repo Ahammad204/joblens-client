@@ -54,7 +54,11 @@ export const router = createBrowserRouter([
         ),
       },{
         path:"/chat",
-        element:<Chatbot></Chatbot>
+        element:(
+          <PrivateRoute>
+            <Chatbot></Chatbot>
+          </PrivateRoute>
+        )
       }
     ],
   },

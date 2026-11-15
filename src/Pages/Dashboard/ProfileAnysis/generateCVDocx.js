@@ -109,26 +109,16 @@ function buildDocxDocument(cv) {
   }
 
   // ── EDUCATION ──────────────────────────────────────────────────────
+  // Only the education string the user actually supplied is rendered.
+  // No university name, location, or years are invented here: the data
+  // passed to this function (generatedCV.personalInfo) has no such fields,
+  // so they are omitted rather than hardcoded.
   if (cv.personalInfo?.education) {
     children.push(sectionHeading("Education"));
 
-    // University row — name left, location right
+    // Degree row — the user's actual education text, on its own
     children.push(
       new Paragraph({
-        tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
-        spacing: { after: 40 },
-        children: [
-          new TextRun({ text: "BGC Trust University Bangladesh", bold: true, size: 20, font: "Arial" }),
-          new TextRun({ text: "\t", size: 20, font: "Arial" }),
-          new TextRun({ text: "Chandanaish, Chattogram", size: 20, font: "Arial", color: "555555" }),
-        ],
-      })
-    );
-
-    // Degree row — degree left, year right
-    children.push(
-      new Paragraph({
-        tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
         spacing: { after: 160 },
         children: [
           new TextRun({
@@ -137,8 +127,6 @@ function buildDocxDocument(cv) {
             font: "Arial",
             italics: true,
           }),
-          new TextRun({ text: "\t", size: 20, font: "Arial" }),
-          new TextRun({ text: "2023 – Present", size: 20, font: "Arial", color: "555555" }),
         ],
       })
     );

@@ -212,7 +212,7 @@ const CVAutoAnalysis = () => {
       const analysis = await analyzeCV(user.resume);
 
       // Trained ML model prediction (Linear SVM) — runs next to the
-      // rule-based/LLM analysis. If the ML service is down, the rest
+      // local rule-based analysis. If the ML service is down, the rest
       // of the analysis still saves; the error is shown, not fatal.
       let ml = null;
       try {
@@ -365,7 +365,7 @@ const CVAutoAnalysis = () => {
         </h3>
 
         <p className="text-gray-600 mb-4 text-sm">
-          This data was **automatically extracted from your resume** and is used
+          This data was automatically extracted from your resume and is used
           for job matching and recommendations. You can manually edit the
           skills/tools above, or re-run the analysis below.
         </p>
@@ -373,7 +373,7 @@ const CVAutoAnalysis = () => {
         {cvAnalysis?.explain ? (
           <div className="bg-red-50 p-6 rounded-xl border border-red-200 shadow-inner">
             <h4 className="font-semibold text-[#41b39d] mb-2">
-              AI Explanation:
+              Analysis:
             </h4>
             <p className="text-gray-700 leading-relaxed text-sm">
               {cvAnalysis.explain}
@@ -405,13 +405,14 @@ const CVAutoAnalysis = () => {
                   {mlPrediction.predicted_category}
                 </span>{" "}
                 <span className="text-sm text-gray-500">
-                  (score {(mlPrediction.confidence * 100).toFixed(1)}%)
+                  (relative score {mlPrediction.confidence.toFixed(4)})
                 </span>
               </p>
               <ul className="mt-3 space-y-1 text-sm text-gray-700">
                 {mlPrediction.top_3?.map((t, i) => (
                   <li key={i}>
-                    {i + 1}. {t.category} — {(t.probability * 100).toFixed(1)}%
+                    {i + 1}. {t.category} — relative score{" "}
+                    {t.probability.toFixed(4)}
                   </li>
                 ))}
               </ul>
@@ -442,7 +443,7 @@ const CVAutoAnalysis = () => {
         </button>
       </div>
 
-      {/* --- AI Generated CV Section --- */}
+      {/* --- Generated CV Section --- */}
       <div className="mt-8">
         <button
           onClick={generateCV}
@@ -451,7 +452,7 @@ const CVAutoAnalysis = () => {
             loadingCV ? "bg-gray-400" : "bg-[#41b39d]"
           } text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg`}
         >
-          {loadingCV ? "Generating CV..." : "Generate AI CV"}
+          {loadingCV ? "Generating CV..." : "Generate CV"}
         </button>
       </div>
 
