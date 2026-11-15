@@ -35,7 +35,7 @@ export const analyzeCV = async (cvText) => {
         skills: data.data.skills || [],
         tools: data.data.tools || [],
         roles: data.data.roles || [],
-        explain: "Extracted locally with your trained ML model (Linear SVM, 24 categories).",
+        explain: "Extracted locally with your trained ML model (Linear SVM, 18 roles).",
       };
     } else {
       return {

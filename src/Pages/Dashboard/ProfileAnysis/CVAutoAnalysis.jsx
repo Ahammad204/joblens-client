@@ -417,7 +417,7 @@ const CVAutoAnalysis = () => {
                 ))}
               </ul>
               <p className="mt-3 text-xs text-gray-500">
-                Trained Linear SVM on 2,484 CVs. Scores are relative, not
+                Trained Linear SVM on 9,028 CVs. Scores are relative, not
                 calibrated probabilities.
               </p>
             </div>
