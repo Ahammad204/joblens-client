@@ -26,10 +26,10 @@ export default function Chatbot() {
         setTyping(false);
       }, 600);
     } catch (err) {
+      console.error("Chat API Error:", err);
       setMessages((prev) => [
         ...prev,
-        { role: "bot", text: "Something went wrong. Try again." },
-        console.log(err)
+        { role: "bot", text: "Something went wrong. Please try again." },
       ]);
       setTyping(false);
     }

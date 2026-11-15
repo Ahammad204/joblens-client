@@ -35,14 +35,14 @@ export const analyzeCV = async (cvText) => {
         skills: data.data.skills || [],
         tools: data.data.tools || [],
         roles: data.data.roles || [],
-        explain: "Extracted using OpenRouter (kat-coder-pro).",
+        explain: "Extracted locally with your trained ML model (Linear SVM, 24 categories).",
       };
     } else {
       return {
         skills: [],
         tools: [],
         roles: [],
-        explain: data.error || "Failed to extract using OpenRouter.",
+        explain: data.error || "Local CV extraction failed.",
       };
     }
   } catch (err) {
