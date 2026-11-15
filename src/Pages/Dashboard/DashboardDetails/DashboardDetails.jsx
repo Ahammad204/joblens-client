@@ -148,7 +148,7 @@ useEffect(() => {
         </h2>
         <p className="text-gray-600 mb-6">
           {roadmap 
-            ? `Roadmap for **${roadmap.targetRole}** over **${roadmap.timeframe}** is ready. Check your progress, or generate a new one!`
+            ? `Roadmap for ${roadmap.targetRole} over ${roadmap.timeframe} is ready. Check your progress, or generate a new one!`
             : "Use AI to create a tailored, step-by-step learning plan to land your dream job."}
         </p>
 

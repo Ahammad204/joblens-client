@@ -35,7 +35,7 @@ export const analyzeCV = async (cvText) => {
         skills: data.data.skills || [],
         tools: data.data.tools || [],
         roles: data.data.roles || [],
-        explain: "Extracted using OpenRouter (kat-coder-pro).",
+        explain: "Extracted using OpenRouter (gpt-oss-120b).",
       };
     } else {
       return {

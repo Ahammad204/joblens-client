@@ -365,7 +365,7 @@ const CVAutoAnalysis = () => {
         </h3>
 
         <p className="text-gray-600 mb-4 text-sm">
-          This data was **automatically extracted from your resume** and is used
+          This data was automatically extracted from your resume and is used
           for job matching and recommendations. You can manually edit the
           skills/tools above, or re-run the analysis below.
         </p>
@@ -405,13 +405,14 @@ const CVAutoAnalysis = () => {
                   {mlPrediction.predicted_category}
                 </span>{" "}
                 <span className="text-sm text-gray-500">
-                  (score {(mlPrediction.confidence * 100).toFixed(1)}%)
+                  (relative score {mlPrediction.confidence.toFixed(4)})
                 </span>
               </p>
               <ul className="mt-3 space-y-1 text-sm text-gray-700">
                 {mlPrediction.top_3?.map((t, i) => (
                   <li key={i}>
-                    {i + 1}. {t.category} — {(t.probability * 100).toFixed(1)}%
+                    {i + 1}. {t.category} — relative score{" "}
+                    {t.probability.toFixed(4)}
                   </li>
                 ))}
               </ul>
